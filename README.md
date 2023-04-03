@@ -17,6 +17,7 @@ Indice
 
 - Paso 1 Entorno: git checkout step-1
 - Paso 2 Creación del proyecto: git checkout step-2
+- Paso 3 Primeros pasos: git checkout step-3
 
 ## Paso 1 (entorno)
 
@@ -113,3 +114,52 @@ Al terminar debemos eliminar el contenido de la carpeta html, ya que utlizaremos
 ```
 rm -rf html; mkdir html
 ```
+
+## Paso 3 Primeros pasos
+
+A partir de este punto simpre trabajaremos en la carpeta "html" que es la de nuestro proyecto.
+
+```
+cd html
+```
+
+En este punto si has seguido las instrucciones debe poder ver la página de Bienvenida de Symfony en http://nombre-del-proyecto.local, por ejemplo si no modificaste el nombre del proyecto en el Paso 1 y añadiste a hosts la entrada correcta, deberias poder ver http://symfony-demo.local.local
+
+Es conveniente que explores un poco la estructura de un proyecto Symfony. 
+
+```
+├── bin/                -> útiles ejecutables, el comando console y phpunit
+├── config/             -> configuración del proyecto 
+├── public/             -> es el la capeta raíz de la web (documentroot de apache) por index.php entran de todas las peticiones php.
+├── src/                -> el código
+├── ...                 -> otras carpetas que dependen del proyecto y son no importantes ahora.
+├── var/                -> cache, logs, etc
+├── vendor/             -> dependencias externas (paquetes que instalarás con composer generalmente)
+├── .env                -> configuraciones dependientes del entorno (parámetros)
+├── ...                 -> otros ficheros no importantes ahora.
+├── symfony.lock
+├── composer.json       -> ficheros de composer para la gestion de paquetes
+└── composer.lock 
+```
+
+Dentro de la carpeta bin encontramos un ejecutable proporcioando por Symonfy para ayudar 
+
+```
+bin/console
+```
+
+Ahora podemos crear nuestro primer controlador ayudados por este comando.
+
+- Primer Controlador
+
+```
+bin/console make:controller
+```
+
+Se lanza un wizard que pedirá el nombre del controlador que quieres crear, prueba Category. Automaticamente se crean dos ficheros. Uno es el controlador *src/Controller/CategoryController.php* (Los controladores deben terminar su nombre con Controller, Symfony lo añade por ti). El otro es una plantilla de Twig* con el código de generación del html que puede ver en: http://nombre-del-proyecto.local/category
+
+*Twig* es un motor de plantillas para php. Si vienes de java es similar a thymeleaf
+
+No lo usaremos porque crearemos una API, nuestras salidas serán respuestas json. 
+
+Que revises la documentación oficial y si puedes leas el libro https://symfony.com/doc/6.2/the-fast-track/en/index.html. (La versión online es gratis)

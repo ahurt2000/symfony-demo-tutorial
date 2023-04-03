@@ -15,8 +15,8 @@ Puedes desplazarte entre los pasos utilizando git para moverte a los commit corr
 
 Indice
 
-Paso 1: git checkout step-1
-
+- Paso 1 Entorno: git checkout step-1
+- Paso 2 Creación del proyecto: git checkout step-2
 
 ## Paso 1 (entorno)
 
@@ -83,3 +83,33 @@ Debes obtener una lista de comandos.
 Composer es el gestor de paquetes que más se utiliza en PHP y Symfony. Si vienes de java, encontrarás composer es similar a Maven.
 
 * En este tutorial no usamos el installer de symfony en su lugar usaremos composer. 
+
+
+## Paso 2 Proyecto Symfony
+
+En el proyecto trabajaremos con el codigo que ya esta en el repositorio, pero para fines didácticos mostraremos como crear un proyecto Symfony
+
+- Crear proyecto symfony
+
+Ejecuta el comando:
+
+```
+composer create-project symfony/website-skeleton .
+```
+
+Esto hará uso de composer para descargar y pre configurar todos los paquetes bases de Symfony.
+
+Siempre podremos añadir nuevas dependencias con el mismo composer, por ejemplo:
+
+```
+composer require jajo/jsondb
+```
+
+Esto nos descarga el paquete https://github.com/donjajo/php-jsondb en nuestro proyecto en la carpeta vendor(html/vendor)
+
+
+Al terminar debemos eliminar el contenido de la carpeta html, ya que utlizaremos el que descargas del repositorio en siguientes pasos.
+
+```
+rm -rf html; mkdir html
+```

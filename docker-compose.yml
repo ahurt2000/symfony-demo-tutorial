@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+
+  sqlite3:
+    image: nouchka/sqlite3:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-sqlite3
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./docker/db/:/root/db/
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
+
+  apache:
+    container_name: ${COMPOSE_PROJECT_NAME}-apache
+    build:
+      context: ./docker/apache
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      - ./html:/var/www/html/:rw
+      - ./docker/apache/log:/var/log/apache2:rw
+      - ./docker/apache/vhost:/etc/apache2/sites-available:rw
+    environment:
+        - PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+    networks:
+      isolated-nw:
+        aliases:
+        - ${COMPOSE_PROJECT_NAME}.local          
+
+  php:
+    container_name: ${COMPOSE_PROJECT_NAME}-php
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    hostname: ${COMPOSE_PROJECT_NAME}-php
+    volumes:
+      - ./html:/var/www/html:rw
+      - ./.composer:/var/www/.composer:rw
+      - ./.symfony5:/var/www/.symfony5:rw
+#      - ./docker/php/conf.d:/usr/local/etc/php/conf.d/:rw
+    networks:
+       isolated-nw:
+          aliases:
+            - php
+
+
+networks:
+  isolated-nw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.242.0.0/24

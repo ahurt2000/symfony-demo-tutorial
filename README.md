@@ -18,6 +18,7 @@ Indice
 - Paso 1 Entorno: git checkout step-1
 - Paso 2 Creación del proyecto: git checkout step-2
 - Paso 3 Primeros pasos: git checkout step-3
+- Paso 4 Implementar operaciones: git checkout step-4
 
 ## Paso 1 (entorno)
 
@@ -163,3 +164,75 @@ Se lanza un wizard que pedirá el nombre del controlador que quieres crear, prue
 No lo usaremos porque crearemos una API, nuestras salidas serán respuestas json. 
 
 Que revises la documentación oficial y si puedes leas el libro https://symfony.com/doc/6.2/the-fast-track/en/index.html. (La versión online es gratis)
+
+## Paso 4 Implementar operaciones
+
+Ahora que ya tenemos un controlador y una operación de negocio ficticia, vamos a modificarla para añadir las operaciones reales que consumirá nuestra pantalla. Deberemos añadir una operación para listar, una para actualizar, una para guardar y una para borrar. No vamos a trabajar directamente con datos simples, sino que usaremos objetos para recibir información y para enviar información.
+
+Estos objetos típicamente se denominan DTO (Data Transfer Object) y nos sirven justamente para encapsular información que queremos transportar. En realidad no son más que clases sencillas con propiedades que encapsulan los datos. En versiones anteriores de PHP estas clases se construían con las propiedades, y sus métodos "setters" y "getters", pero en PHP 8.x aprovechamos la promoción de propiedades en el constructor [constructor property promotion](https://www.php.net/manual/en/language.oop5.decon.php#language.oop5.decon.constructor.promotion). 
+
+Además de declarar las únicas propiedades el objeto como *readonly* para de esta forma hacer estos objetos inmutables. 
+
+**las instrucciones asumen que que estas siempre en la carpeta del proyecto(html)**
+
+```
+mkdir -p src/Model
+```
+
+Dentro creamos la clase CategoryDto en el fichero *src/Model/CategoryDto.php*
+
+```PHP
+<?php
+
+namespace App\Model;
+
+final class CategoryDto 
+{
+    public function __construct(public readonly int $id, public readonly string $name) {
+
+    }   
+}
+```
+
+A continuación modificaremos el controlador para que utilice el DTO. 
+Modifica la clase *CategoryController* en el fichero *src/Category/CategoryController.php* de forma que quede así:
+
+```PHP
+<?php
+
+namespace App\Controller;
+
+use App\Model\CategoryDto;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class CategoryController extends AbstractController
+{
+    #[Route('/category', name: 'app_category', methods: ['GET','HEAD'])]
+    public function index(): Response
+    {
+        $categories = [new CategoryDto(id:1, name:"Categoria1"), new CategoryDto(2,"Categoria2")];
+
+        return new JsonResponse($categories, Response::HTTP_CREATED);
+    }
+}
+```
+
+La anotación "Route" define la ruta a la que debe atender nuestro controlador, así como los métodos del protocolo HTTP que atenderá nuestra ruta. 
+
+Symfony tiene un fichero donde indicamos las rutas de los controladores y algunos parámetros más. Es conveniente que revises el archivo *html/config/routes.yaml*.
+
+```YAML
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+```
+
+Ahora puedes ver resultado del controlador en la url en el navegador o con postman [http://nombre-del-proyecto.local/category](http://nombre-del-proyecto.local/category)
+
+Nuestro controlador ahora tiene unas anotaciones nuevas para especificar los métodos y ahora la respuesta no es HTML generado con una plantilla TWIG, sino un JsonResponse como espera que responda la api.
+
+Pero hasta ahora solo devuelve la misma lista de Categorias que hemos creado. Debemos añadir otras acciones para que nuestra API se más funcional.
+
